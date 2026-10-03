@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  toolchain:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install the local optimizer toolchain
+        run: npm install --prefix Toolchain
+      - name: Check optimizer scripts
+        run: node Toolchain/selftest.mjs
+
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install the optimizer toolchain
+        run: sh scripts/setup-toolchain.sh
+      - name: Test GLBCore
+        run: swift test --package-path Packages/GLBCore
+      - name: Build the app
+        run: xcodebuild -project macos/GLBOptimizer.xcodeproj -scheme GLBOptimizer -destination 'platform=macOS' -derivedDataPath macos/build CODE_SIGNING_ALLOWED=NO build
