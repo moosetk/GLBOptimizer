@@ -21,7 +21,7 @@ GLBOptimizer.app
 ## 环境
 
 - macOS 13 或更新版本，已在 Apple Silicon 上开发
-- Xcode 15 或更新版本
+- Xcode 16 或更新版本
 - Node.js 18 或更新版本（Homebrew：`brew install node`）
 - 只有选用 KTX2 时才需要 `toktx`：`brew install ktx-software`
 
