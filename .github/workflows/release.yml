@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version number without the leading v, e.g. 1.0.0
+        required: true
+        default: 1.0.0
+
+permissions:
+  contents: write
+
+jobs:
+  dmg:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build the app and DMG
+        env:
+          APP_VERSION: ${{ inputs.version }}
+        run: sh scripts/build-release.sh
+      - name: Publish the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          mv dist/GLBOptimizer.dmg "dist/GLBOptimizer-$VERSION.dmg"
+          gh release create "v$VERSION" "dist/GLBOptimizer-$VERSION.dmg" \
+            --target "$GITHUB_SHA" \
+            --title "GLB 优化器 $VERSION" \
+            --notes "适用于 Apple Silicon、macOS 13 及以上。需要先安装 Node.js（brew install node）。应用未经 Apple 公证，第一次打开被拦截时，到「系统设置 → 隐私与安全性」底部点「仍要打开」。"

@@ -2,6 +2,7 @@
 # Builds dist/GLBOptimizer.app and dist/GLBOptimizer.dmg.
 # SIGN_IDENTITY defaults to ad-hoc ("-"). Set it to a "Developer ID Application: ..." identity
 # to produce a build that other Macs accept after notarization.
+# APP_VERSION (e.g. 1.2.0) overrides the version shown in Finder and the About window.
 set -eu
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -20,6 +21,7 @@ xcodebuild \
   -destination 'platform=macOS,arch=arm64' \
   -derivedDataPath "$BUILD" \
   CODE_SIGNING_ALLOWED=NO \
+  ${APP_VERSION:+MARKETING_VERSION="$APP_VERSION"} \
   build
 
 rm -rf "$DIST"
